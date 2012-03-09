@@ -13,7 +13,13 @@ Copyright:
     Copyright (C) 2007 Iavor Diatchki
 Category:            Control
 Build-type:          Simple
-Cabal-version:       >=1.2
+Cabal-version:       >=1.6
+homepage:            https://github.com/reinerp/indexed-extras
+bug-reports:         https://github.com/reinerp/indexed-extras/issues
+
+source-repository head
+  type:                 git
+  location:             git://github.com/reinerp/indexed-extras.git
 
 Library
   Exposed-modules:
@@ -27,7 +33,6 @@ Library
      bifunctors < 0.2
   ghc-options:
      -Wall
-     -Werror
   Extensions:
      UndecidableInstances,
      GeneralizedNewtypeDeriving,
