@@ -18,7 +18,7 @@ module Control.Monad.Indexed.Cont
 	) where
 
 import Control.Applicative
-import Control.Functor.Pointed
+import Data.Pointed
 -- import Control.Monad.Trans
 import Control.Monad.Identity
 import Control.Monad.Indexed

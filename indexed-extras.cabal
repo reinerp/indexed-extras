@@ -5,7 +5,7 @@ Description:         Indexed functors, monads and comonads that require extensio
 License:             BSD3
 License-file:        LICENSE
 Author:              Edward A. Kmett
-Maintainer:          Reiner Pope <reiner.pope@gmail.com
+Maintainer:          Reiner Pope <reiner.pope@gmail.com>
 Copyright:           
     Copyright (C) 2012 Reiner Pope,
     Copyright (C) 2008 Edward A. Kmett, 
@@ -21,10 +21,16 @@ Library
      Control.Monad.Indexed.State
   Build-depends:
      base < 5,
-     indexed < 0.2
+     indexed < 0.2,
+     mtl < 2.1,
+     pointed < 2.1,
+     bifunctors < 0.2
   ghc-options:
      -Wall
      -Werror
   Extensions:
      UndecidableInstances,
-     GeneralizedNewtypeDeriving
+     GeneralizedNewtypeDeriving,
+     FlexibleInstances,
+     MultiParamTypeClasses,
+     Rank2Types

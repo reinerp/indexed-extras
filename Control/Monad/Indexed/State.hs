@@ -1,11 +1,10 @@
-{-# OPTIONS_GHC -fallow-undecidable-instances #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Indexed.State
 -- Copyright   :  (C) 2008 Edward Kmett
 -- License     :  BSD-style (see the file LICENSE)
 --
--- Maintainer  :  Edward Kmett <ekmett@gmail.com>
+-- Maintainer  :  Reiner Pope <reiner.pope@gmail.com>
 -- Stability   :  experimental 
 -- Portability :  portable (although the MTL instances aren't!)
 --
@@ -19,9 +18,7 @@ module Control.Monad.Indexed.State
 	) where
 
 import Control.Applicative
-import Control.Category.Hask
--- import Control.Category.Cartesian
-import Control.Functor
+import Data.Bifunctor
 import Control.Monad.Indexed
 import Control.Monad.Indexed.Trans
 import Control.Monad.Indexed.Fix
@@ -64,13 +61,7 @@ instance IxMonadState IxState where
 	iget = IxState (\x -> (x,x))
 	iput x = IxState (\_ -> ((),x))
 
-instance PFunctor (IxState i) Hask Hask where
-	first = first'
-
-instance QFunctor (IxState i) Hask Hask where
-	second = second'
-
-instance Bifunctor (IxState i) Hask Hask Hask where 
+instance Bifunctor (IxState i) where 
 	bimap f g m = IxState $ bimap g f . runIxState m
 
 instance Monad (IxState i i) where
@@ -111,13 +102,7 @@ instance Monad m => IxApplicative (IxStateT m) where
 instance Monad m => IxMonad (IxStateT m) where
     	ibind k m = IxStateT $ \s -> runIxStateT m s >>= \ ~(a, s') -> runIxStateT (k a) s'
 
-instance Monad m => PFunctor (IxStateT m i) Hask Hask where
-	first = first'
-
-instance Monad m => QFunctor (IxStateT m i) Hask Hask where
-	second = second'
-
-instance Monad m => Bifunctor (IxStateT m i) Hask Hask Hask where
+instance Monad m => Bifunctor (IxStateT m i) where
 	bimap f g m = IxStateT $ liftM (bimap g f) . runIxStateT m
 
 instance Monad m => IxMonadState (IxStateT m) where
