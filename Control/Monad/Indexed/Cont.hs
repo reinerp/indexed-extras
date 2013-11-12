@@ -8,6 +8,7 @@
 -- Stability	: experimental
 -- Portability	: rank-2 Types required for correctness of shift, but they can be removed
 -------------------------------------------------------------------------------------------
+{-# LANGUAGE RankNTypes #-}
 module Control.Monad.Indexed.Cont 
 	( IxMonadCont(reset, shift)
 	, IxContT(IxContT, runIxContT)
@@ -28,7 +29,7 @@ import Control.Monad.Indexed.Trans
 
 class IxMonad m => IxMonadCont m where
 	reset :: m a o o -> m r r a
-	shift :: (forall i. (a -> m i i o) -> m r j j) -> m r o a
+	shift :: ((forall i . a -> m i i o) -> m r j j) -> m r o a
 --	shift :: ((a -> m i i o) -> m r j j) -> m r o a
 
 newtype IxContT m r o a = IxContT { runIxContT :: (a -> m o) -> m r }
