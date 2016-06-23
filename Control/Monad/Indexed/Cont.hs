@@ -8,6 +8,7 @@
 -- Stability   : experimental
 -- Portability : rank-2 Types required for correctness of shift, but they can be removed
 -------------------------------------------------------------------------------------------
+{-# LANGUAGE CPP #-}
 module Control.Monad.Indexed.Cont
   ( IxMonadCont(reset, shift)
   , IxContT(IxContT, runIxContT)
@@ -17,7 +18,9 @@ module Control.Monad.Indexed.Cont
   , runIxCont_
   ) where
 
+#if __GLASGOW_HASKELL__ < 709
 import Control.Applicative
+#endif
 import Data.Pointed
 import qualified Control.Monad.Cont as Cont
 import Control.Monad.Identity

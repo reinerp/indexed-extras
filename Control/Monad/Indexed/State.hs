@@ -9,6 +9,7 @@
 -- Portability :  portable (although the MTL instances aren't!)
 --
 ----------------------------------------------------------------------------
+{-# LANGUAGE CPP #-}
 module Control.Monad.Indexed.State
   ( IxMonadState(..)
   , imodify
@@ -17,7 +18,9 @@ module Control.Monad.Indexed.State
   , IxState(..)
   ) where
 
+#if __GLASGOW_HASKELL__ < 709
 import Control.Applicative
+#endif
 import Data.Bifunctor
 import Control.Monad.Indexed
 import Control.Monad.Indexed.Trans
