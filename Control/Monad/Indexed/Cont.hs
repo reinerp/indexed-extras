@@ -85,7 +85,10 @@ instance Monad m => Monad (IxContT m i i) where
 	m >>= k = ibind k m
 
 instance Monad m => Cont.MonadCont (IxContT m i i) where 
-	callCC = callCC
+	-- GHC < 7.10 needs some hand-holding to specialize the 'forall' in the
+	-- continuation type.  Otherwise we'd just have:
+	--   callCC = callCC
+	callCC f = callCC (\k -> f k)
 
 instance IxMonadTrans IxContT where
 	ilift m = IxContT (m >>=)
