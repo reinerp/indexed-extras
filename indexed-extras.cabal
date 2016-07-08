@@ -1,5 +1,5 @@
 Name:                indexed-extras
-Version:             0.1.1
+Version:             0.2
 Synopsis:            Indexed functors, monads and comonads that require extensions to Haskell98
 Description:         Indexed functors, monads and comonads that require extensiosn to Haskell98
 License:             BSD3
