@@ -28,9 +28,9 @@ Library
   Build-depends:
      base < 5,
      indexed < 0.2,
-     mtl < 2.2,
-     pointed < 2.2,
-     bifunctors < 0.2
+     mtl < 2.3,
+     pointed < 5.1,
+     bifunctors < 5.4
   ghc-options:
      -Wall
   Extensions:

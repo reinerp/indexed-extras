@@ -19,7 +19,7 @@ module Control.Monad.Indexed.Cont
 
 import Control.Applicative
 import Data.Pointed
--- import Control.Monad.Trans
+import qualified Control.Monad.Cont as Cont
 import Control.Monad.Identity
 import Control.Monad.Indexed
 import Control.Monad.State
@@ -28,7 +28,7 @@ import Control.Monad.Indexed.Trans
 
 class IxMonad m => IxMonadCont m where
 	reset :: m a o o -> m r r a
-	shift :: (forall i. (a -> m i i o) -> m r j j) -> m r o a
+	shift :: ((forall i. a -> m i i o) -> m r j j) -> m r o a
 --	shift :: ((a -> m i i o) -> m r j j) -> m r o a
 
 newtype IxContT m r o a = IxContT { runIxContT :: (a -> m o) -> m r }
@@ -52,6 +52,24 @@ instance Monad m => IxMonadCont (IxContT m) where
 	reset e = IxContT $ \k -> runIxContT e return >>= k
 	shift e = IxContT $ \k -> e (\a -> IxContT (\k' -> k a >>= k')) `runIxContT` return
 
+callCC :: Monad m => ((forall i b. a -> IxContT m o i b) -> IxContT m r o a) -> IxContT m r o a
+callCC f = shift (\k -> f (adapt k) >>>= k)
+	where
+		-- Both 'shift' and 'callCC' capture the current continuation up to the
+		-- containing 'reset'; but where 'shift' continuations "return" the
+		-- value "return"ed by the containing 'reset'-delimited computation,
+		-- 'callCC' continuations never "return" but instead cause the
+		-- containing 'reset' to "return" the captured continuation's result.
+		--
+		-- @adapt k x@ converts a 'shift'-style continuation to a
+		-- 'callCC'-style continuation by using its "return"ed value directly
+		-- as the final result.
+		--
+		-- @escape x@ ignores its continuation and provides x directly as the
+		-- result.
+		adapt k x = k x >>>= escape
+		escape x = IxContT (\_k -> return x)
+
 instance Monad m => Functor (IxContT m i j) where
 	fmap = imap
 
@@ -66,8 +84,11 @@ instance Monad m => Monad (IxContT m i i) where
 	return = ireturn
 	m >>= k = ibind k m
 
---instance Monad m => MonadCont (IxContT m i i) where 
---	callCC f = shift (\k -> f k >>>= k)
+instance Monad m => Cont.MonadCont (IxContT m i i) where 
+	-- GHC < 7.10 needs some hand-holding to specialize the 'forall' in the
+	-- continuation type.  Otherwise we'd just have:
+	--   callCC = callCC
+	callCC f = callCC (\k -> f k)
 
 instance IxMonadTrans IxContT where
 	ilift m = IxContT (m >>=)
@@ -95,8 +116,9 @@ runIxCont (IxCont k) f = runIdentity $ runIxContT k (return . f)
 runIxCont_ :: IxCont r a a -> r
 runIxCont_ m = runIxCont m id
 
--- instance MonadCont (IxCont i i) where 
---	callCC f = shift (\k -> f k >>>= k)
+instance Cont.MonadCont (IxCont i i) where
+	callCC f = IxCont (callCC (\q -> unwrapIxCont (f (IxCont . q))))
+		where unwrapIxCont (IxCont x) = x
 
 instance Functor (IxCont i j) where
 	fmap = imap
