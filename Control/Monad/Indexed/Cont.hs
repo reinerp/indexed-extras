@@ -45,10 +45,10 @@ instance IxFunctor (IxContT m) where
 instance IxPointed (IxContT m) where
   ireturn a = IxContT ($a)
 
-instance Monad m => IxApplicative (IxContT m) where
+instance IxApplicative (IxContT m) where
   iap = iapIxMonad
 
-instance Monad m => IxMonad (IxContT m) where
+instance IxMonad (IxContT m) where
   ibind f c = IxContT $ \k -> runIxContT c $ \a -> runIxContT (f a) k
 
 instance Monad m => IxMonadCont (IxContT m) where
@@ -73,17 +73,17 @@ callCC f = shift (\k -> f (adapt k) >>>= k)
     adapt k x = k x >>>= escape
     escape x = IxContT (\_k -> return x)
 
-instance Monad m => Functor (IxContT m i j) where
+instance Functor (IxContT m i j) where
   fmap = imap
 
-instance Monad m => Pointed (IxContT m i i) where
+instance Pointed (IxContT m i i) where
   point = ireturn
 
-instance Monad m => Applicative (IxContT m i i) where
+instance Applicative (IxContT m i i) where
   pure = ireturn
   (<*>) = iap
 
-instance Monad m => Monad (IxContT m i i) where
+instance Monad (IxContT m i i) where
   return = ireturn
   m >>= k = ibind k m
 
