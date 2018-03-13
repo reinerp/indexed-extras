@@ -1,3 +1,4 @@
+{-# LANGUAGE RecordWildCards #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Indexed.State
@@ -16,6 +17,9 @@ module Control.Monad.Indexed.State
   , igets
   , IxStateT(..)
   , IxState(..)
+  , lift
+  , evalIxStateT
+  , execIxStateT
   ) where
 
 #if __GLASGOW_HASKELL__ < 709
@@ -89,6 +93,18 @@ instance IxMonadFix IxState where
 -- Indexed State Monad Transformer
 
 newtype IxStateT m i j a = IxStateT { runIxStateT :: i -> m (a, j) }
+
+-- | Lift a computation from the inner monad.
+lift :: Monad m => m a -> IxStateT m i i a
+lift ma = IxStateT $ (\i -> ma >>= \a -> return (a, i))
+
+-- | Evaluate a computation in the monad from some initial state. Returns the resulting value.
+evalIxStateT :: Monad m => IxStateT m i j a -> i -> m a
+evalIxStateT IxStateT{..} i = runIxStateT i >>= return . fst
+
+-- | Evaluate a computation in the monad from some initial state. Returns the final state.
+execIxStateT :: Monad m => IxStateT m i j a -> i -> m j
+execIxStateT IxStateT{..} i = runIxStateT i >>= return . snd
 
 instance Monad m => Functor (IxStateT m i j) where
   fmap = imap
