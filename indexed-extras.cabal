@@ -6,10 +6,10 @@ License:             BSD3
 License-file:        LICENSE
 Author:              Edward A. Kmett
 Maintainer:          Reiner Pope <reiner.pope@gmail.com>
-Copyright:           
+Copyright:
     Copyright (C) 2012 Reiner Pope,
-    Copyright (C) 2008 Edward A. Kmett, 
-    Copyright (C) 2004--2008 Dave Menendez, 
+    Copyright (C) 2008 Edward A. Kmett,
+    Copyright (C) 2004--2008 Dave Menendez,
     Copyright (C) 2007 Iavor Diatchki
 Category:            Control
 Build-type:          Simple
@@ -28,9 +28,9 @@ Library
   Build-depends:
      base < 5,
      indexed < 0.2,
-     mtl < 2.3,
+     mtl < 2.4,
      pointed < 5.1,
-     bifunctors < 5.6
+     bifunctors < 5.7
   ghc-options:
      -Wall
   Extensions:
