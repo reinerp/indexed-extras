@@ -30,6 +30,8 @@ import Control.Monad.Writer
 import Control.Monad.Reader
 import Control.Monad.Cont
 import Control.Monad.Error.Class
+import Control.Monad.Fix (MonadFix(mfix))
+import Control.Monad (MonadPlus(mplus, mzero), liftM)
 
 class IxMonad m => IxMonadState m where
   iget :: m i i i
@@ -68,7 +70,6 @@ instance Bifunctor (IxState i) where
   bimap f g m = IxState $ bimap g f . runIxState m
 
 instance Monad (IxState i i) where
-  return = ireturn
   m >>= k = ibind k m
 
 instance Applicative (IxState i i) where
@@ -125,7 +126,6 @@ instance MonadFix m => MonadFix (IxStateT m i i) where
   mfix = imfix
 
 instance Monad m => Monad (IxStateT m i i) where
-  return = ireturn
   m >>= k = ibind k m
 
 instance Monad m => Applicative (IxStateT m i i) where

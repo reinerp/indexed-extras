@@ -43,7 +43,7 @@ instance IxFunctor (IxContT m) where
   imap f m = IxContT $ \c -> runIxContT m (c . f)
 
 instance IxPointed (IxContT m) where
-  ireturn a = IxContT ($a)
+  ireturn a = IxContT ($ a)
 
 instance IxApplicative (IxContT m) where
   iap = iapIxMonad
@@ -84,7 +84,6 @@ instance Applicative (IxContT m i i) where
   (<*>) = iap
 
 instance Monad (IxContT m i i) where
-  return = ireturn
   m >>= k = ibind k m
 
 instance Monad m => Cont.MonadCont (IxContT m i i) where
@@ -134,6 +133,5 @@ instance Applicative (IxCont i i) where
   (<*>) = iap
 
 instance Monad (IxCont i i) where
-  return = ireturn
   m >>= k = ibind k m
 
